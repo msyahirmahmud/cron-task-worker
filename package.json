@@ -1,0 +1,12 @@
+{
+  "name": "cron-task-worker",
+  "version": "1.0.0",
+  "description": "Asynchronous Task Queue & Job Worker for running background tasks with automatic retries",
+  "main": "worker.js",
+  "scripts": {
+    "test": "node --test tests/worker.test.js",
+    "start": "node worker.js"
+  },
+  "author": "Syahir Mahmud",
+  "license": "MIT"
+}
