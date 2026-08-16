@@ -11,7 +11,7 @@ class TaskQueueWorker {
     this.running = 0;
   }
 
-  enqueue(taskName, payload, maxRetries = 3) {
+  enqueue(taskName, payload, maxRetries = 3, priority = 5) {
     const job = {
       id: `job-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
       taskName,
@@ -19,10 +19,16 @@ class TaskQueueWorker {
       status: 'pending',
       retries: 0,
       maxRetries,
+      priority, // Higher number = higher priority
       createdAt: new Date().toISOString()
     };
     this.queue.push(job);
+    this.sortQueueByPriority();
     return job;
+  }
+
+  sortQueueByPriority() {
+    this.queue.sort((a, b) => b.priority - a.priority);
   }
 
   async processNext(handler) {
@@ -44,6 +50,7 @@ class TaskQueueWorker {
       if (job.retries < job.maxRetries) {
         job.status = 'pending';
         this.queue.push(job); // re-queue for retry
+        this.sortQueueByPriority();
       } else {
         job.status = 'failed';
         job.error = err.message;

@@ -3,11 +3,12 @@ const { test, describe } = require('node:test');
 const TaskQueueWorker = require('../worker.js');
 
 describe('Task Queue Worker Unit Tests', () => {
-  test('enqueue adds job to pending queue', () => {
+  test('enqueue adds job to pending queue with priority sorting', () => {
     const worker = new TaskQueueWorker();
-    const job = worker.enqueue('send_email', { to: 'test@example.com' });
-    assert.strictEqual(job.taskName, 'send_email');
-    assert.strictEqual(worker.getStats().pending, 1);
+    worker.enqueue('low_job', {}, 3, 1);
+    worker.enqueue('high_job', {}, 3, 10);
+    assert.strictEqual(worker.queue[0].taskName, 'high_job');
+    assert.strictEqual(worker.getStats().pending, 2);
   });
 
   test('processNext executes job successfully', async () => {
