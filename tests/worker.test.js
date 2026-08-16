@@ -11,6 +11,16 @@ describe('Task Queue Worker Unit Tests', () => {
     assert.strictEqual(worker.getStats().pending, 2);
   });
 
+  test('failed jobs route to Dead Letter Queue (DLQ)', async () => {
+    const worker = new TaskQueueWorker();
+    worker.enqueue('fatal_job', {}, 1);
+
+    await worker.processNext(async () => { throw new Error('Unrecoverable error'); });
+    const dlq = worker.getDeadLetterQueue();
+    assert.strictEqual(dlq.length, 1);
+    assert.strictEqual(dlq[0].status, 'dead_letter');
+  });
+
   test('processNext executes job successfully', async () => {
     const worker = new TaskQueueWorker();
     worker.enqueue('sync_db', { table: 'users' });

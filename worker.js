@@ -8,6 +8,7 @@ class TaskQueueWorker {
     this.queue = [];
     this.completed = [];
     this.failed = [];
+    this.dlq = []; // Dead Letter Queue
     this.running = 0;
   }
 
@@ -52,9 +53,11 @@ class TaskQueueWorker {
         this.queue.push(job); // re-queue for retry
         this.sortQueueByPriority();
       } else {
-        job.status = 'failed';
+        job.status = 'dead_letter';
         job.error = err.message;
+        job.failedAt = new Date().toISOString();
         this.failed.push(job);
+        this.dlq.push(job); // Move to Dead Letter Queue
       }
     } finally {
       this.running--;
@@ -63,12 +66,17 @@ class TaskQueueWorker {
     return job;
   }
 
+  getDeadLetterQueue() {
+    return this.dlq;
+  }
+
   getStats() {
     return {
       pending: this.queue.length,
       running: this.running,
       completed: this.completed.length,
-      failed: this.failed.length
+      failed: this.failed.length,
+      deadLetter: this.dlq.length
     };
   }
 }
