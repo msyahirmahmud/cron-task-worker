@@ -3,7 +3,6 @@
 [![Build Status](https://github.com/msyahirmahmud/cron-task-worker/actions/workflows/ci.yml/badge.svg)](https://github.com/msyahirmahmud/cron-task-worker/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org)
-[![Tests Passing](https://img.shields.io/badge/Tests-100%25-brightgreen.svg)]()
 
 > Asynchronous Task Queue & Job Worker for running background tasks, webhooks, and cron jobs with concurrency controls and automatic error retry logic.
 
